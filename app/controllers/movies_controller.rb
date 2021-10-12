@@ -7,7 +7,19 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @movies = Movie.all
+    if !params[:ratings].blank? then
+      session[:ratings] = params[:ratings].to_yaml()
+      @ratings_to_show = YAML.load(session[:ratings])
+    else
+      @ratings_to_show = []
+    end
+    #@movies = Movie.all
+    @all_ratings = Movie.all_ratings
+    if @ratings_to_show.blank?
+     @movies = Movie.all
+    else
+     @movies = Movie.with_ratings(@ratings_to_show)
+    end
   end
 
   def new

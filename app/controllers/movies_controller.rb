@@ -11,7 +11,7 @@ class MoviesController < ApplicationController
       session[:ratings] = params[:ratings].to_yaml()
       @ratings_to_show = YAML.load(session[:ratings])
     else
-      if params[:commit].blank?
+      if params[:commit].blank? and !session[:ratings].blank?
         @ratings_to_show = YAML.load(session[:ratings])
       else
         @ratings_to_show = []

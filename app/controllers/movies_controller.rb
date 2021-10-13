@@ -11,10 +11,11 @@ class MoviesController < ApplicationController
       session[:ratings] = params[:ratings].to_yaml()
       @ratings_to_show = YAML.load(session[:ratings])
     else
-      if !session[:ratings].blank?
+      if params[:commit].blank?
         @ratings_to_show = YAML.load(session[:ratings])
       else
         @ratings_to_show = []
+        session[:ratings] = [].to_yaml
       end
     end
     #@movies = Movie.all

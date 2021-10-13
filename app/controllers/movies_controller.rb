@@ -11,7 +11,11 @@ class MoviesController < ApplicationController
       session[:ratings] = params[:ratings].to_yaml()
       @ratings_to_show = YAML.load(session[:ratings])
     else
-      @ratings_to_show = []
+      if !session[:ratings].blank?
+        @ratings_to_show = YAML.load(session[:ratings])
+      else
+        @ratings_to_show = []
+      end
     end
     #@movies = Movie.all
     @all_ratings = Movie.all_ratings
@@ -19,6 +23,23 @@ class MoviesController < ApplicationController
      @movies = Movie.all
     else
      @movies = Movie.with_ratings(@ratings_to_show)
+    end
+    if !params[:sort].blank? then
+      session[:sort] = params[:sort]
+    end
+    if !session[:sort].blank? then
+      if session[:sort] == 'title' then
+        @title_classes = 'hilite text-primary'
+        @date_classes = 'text-primary'
+        @movies = @movies.order(:title)
+      else
+        @title_classes = 'text-primary'
+        @date_classes = 'hilite text-primary'
+        @movies = @movies.order(:release_date)
+      end
+    else
+      @title_classes = 'text-primary'
+      @date_classes = 'text-primary'
     end
   end
 

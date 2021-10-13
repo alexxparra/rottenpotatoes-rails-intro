@@ -15,9 +15,9 @@
 <table class="table table-striped col-md-12" id="movies">
   <thead>
     <tr>
-      <th>Movie Title</th>
+      <th class='<%= @title_classes %>'><%= link_to "Movie Title", movie_path({id: '', params: {sort: 'title'}}),id: 'title_header' %></th>
       <th>Rating</th>
-      <th>Release Date</th>
+      <th class='<%= @date_classes %>'><%= link_to "Release Date", movie_path({id: '', params: {sort: 'date'}}), id: 'release_date_header' %></th>
       <th>More Info</th>
     </tr>
   </thead>

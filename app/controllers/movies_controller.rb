@@ -10,23 +10,20 @@ class MoviesController < ApplicationController
     if !params[:ratings].blank? then
       session[:ratings] = params[:ratings].to_yaml()
       @ratings_to_show = YAML.load(session[:ratings])
+      redirect_to movies_path
     else
       if params[:commit].blank? and !session[:ratings].blank?
         @ratings_to_show = YAML.load(session[:ratings])
       else
-        @ratings_to_show = []
-        session[:ratings] = [].to_yaml
+        @ratings_to_show = Movie.all_ratings
+        session[:ratings] = @ratings_to_show.to_yaml
       end
     end
-    #@movies = Movie.all
     @all_ratings = Movie.all_ratings
-    if @ratings_to_show.blank?
-     @movies = Movie.all
-    else
-     @movies = Movie.with_ratings(@ratings_to_show)
-    end
+    @movies = Movie.with_ratings(@ratings_to_show)
     if !params[:sort].blank? then
       session[:sort] = params[:sort]
+      redirect_to movies_path
     end
     if !session[:sort].blank? then
       if session[:sort] == 'title' then

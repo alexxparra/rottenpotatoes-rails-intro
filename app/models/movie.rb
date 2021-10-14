@@ -7,7 +7,11 @@ class Movie < ActiveRecord::Base
   def self.with_ratings(ratings_list)
     query = []
     ratings_list.each do |e|
-      query.append("rating = '" + e[0] + "'")
+      if e.is_a? String then
+        query.append("rating = '" + e + "'")
+      else
+        query.append("rating = '" + e[0] + "'")
+      end
     end
     Movie.where(query.join(" or "))
   end

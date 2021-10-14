@@ -7,37 +7,45 @@ class MoviesController < ApplicationController
   end
 
   def index
-    if !params[:ratings].blank? then
-      session[:ratings] = params[:ratings].to_yaml()
-      @ratings_to_show = YAML.load(session[:ratings])
-      redirect_to movies_path
-    else
-      if params[:commit].blank? and !session[:ratings].blank?
+    if params[:ratings].blank? or (params[:sort].blank? and !session[:sort].blank?) then
+      if !session[:ratings].blank?
         @ratings_to_show = YAML.load(session[:ratings])
       else
         @ratings_to_show = Movie.all_ratings
         session[:ratings] = @ratings_to_show.to_yaml
       end
+      if !params[:sort].blank? then
+        session[:sort] = params[:sort]
+        redirect_to movie_path({id: '', params: {sort: params[:sort], 
+          ratings: @ratings_to_show}})
+        return
+      end
+      if !session[:sort].blank?
+        redirect_to movie_path({id: '', params: {sort: session[:sort], 
+          ratings: @ratings_to_show}})
+        return
+      end
+      redirect_to movie_path({id: '', params: {ratings: @ratings_to_show}})
+      return
     end
+    puts params
+    @ratings_to_show = params[:ratings]
+    session[:ratings] = @ratings_to_show.to_yaml
     @all_ratings = Movie.all_ratings
+    puts @ratings_to_show
     @movies = Movie.with_ratings(@ratings_to_show)
+    @title_classes = 'text-primary'
+    @date_classes = 'text-primary'
     if !params[:sort].blank? then
       session[:sort] = params[:sort]
-      redirect_to movies_path
-    end
-    if !session[:sort].blank? then
-      if session[:sort] == 'title' then
-        @title_classes = 'hilite text-primary'
-        @date_classes = 'text-primary'
+      if params[:sort] == 'title' then
+        @title_classes = @title_classes + ' hilite'
         @movies = @movies.order(:title)
       else
-        @title_classes = 'text-primary'
-        @date_classes = 'hilite text-primary'
+        @date_classes = @date_classes + ' hilite'
         @movies = @movies.order(:release_date)
       end
     else
-      @title_classes = 'text-primary'
-      @date_classes = 'text-primary'
     end
   end
 
